@@ -4,6 +4,7 @@ from pygame.locals import *
 
 pygame.init()
 
+running = True
 TITLE = "Platformer"
 WIDTH, HEIGHT = 400, 450
 ACC = 0.5
@@ -32,9 +33,12 @@ class Player(pygame.sprite.Sprite):
 
         pressed_key = pygame.key.get_pressed()
         if pressed_key[K_LEFT]:
-            self.acc.x = -ACC
+            self.acc.x += -ACC
+            print("left")
         if pressed_key[K_RIGHT]:
-            self.acc.x = ACC
+            self.acc.x += ACC
+        if pressed_key[K_ESCAPE]:
+            pygame.quit()
 
         self.acc.x += self.vel.x * FRIC
         self.vel += self.acc
@@ -67,7 +71,7 @@ all_sprites.add(platform())
 
 while True:
     for event in pygame.event.get():
-        if event == QUIT:
+        if event == pygame.QUIT:
             pygame.quit()
             sys.exit()
     
@@ -78,6 +82,7 @@ while True:
 
     plr.move()
 
-    pygame.display.update()
+    pygame.display.flip()
     CLOCK.tick(FPS)
 
+pygame.quit()
