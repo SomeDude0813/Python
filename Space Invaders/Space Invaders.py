@@ -1,55 +1,91 @@
 import pygame
 from pygame.locals import *
 
-w, h = 500,500
-screen = pygame.display.set_mode((w,h))
+pygame.init()
 
-clock = pygame.time.Clock()
-fps = 60
-dt = 0
 
-img_folder = "/home/christian/Desktop/Scripts/Python/Space Invaders"
-alien_img = pygame.transform.scale(pygame.image.load(f"{img_folder}/LargeAlien.png"), (32, 32))
-bg_img = pygame.image.load(f"{img_folder}/background.png")
+CLOCK = pygame.time.Clock()
+FPS = 60
+DT = 0
 
-#player variables
-player_img = pygame.transform.scale(pygame.image.load(f"{img_folder}/Spaceship.png").convert(), (64, 64)) # .convert() images when loading them
-player_pos = pygame.Vector2(screen.get_width() / 2, 350)
-player_speed = 200
+WIDTH, HEIGHT = 500, 500
+CENTER = WIDTH / 2, HEIGHT / 2
+SCREEN = pygame.display.set_mode((WIDTH, HEIGHT))
+pygame.display.set_caption('Space Invaders')
+time = 0
 
-running = True
-class Main():    
-    def render():
-        for event in pygame.event.get():
-            if event == pygame.QUIT:
-                running = False
-        screen.blit(bg_img, (0,0))
+player_img = pygame.transform.scale(pygame.image.load('Space Invaders/Spaceship.png'), (65, 65))
+player_pos = pygame.Vector2( CENTER[0], 400 )
+player_speed = 300
+last_shot = 0
+shot_cd = 1.5
+
+
+background_img = pygame.image.load('Space Invaders/background.jpg')
+
+class bullet_class(pygame.sprite.Sprite):
+    def __init__(self, x, y):
+        pygame.sprite.Sprite.__init__(self)
+        self.alive = False
+        self.image = pygame.transform.scale(pygame.image.load('Space Invaders/bullet.png'), (30, 30))
+        self.rect = self.image.get_rect()
+        self.rect.center = x, y
+        self.speed = 50
+        self.vel = 10
         
-        #player
-        screen.blit(player_img, player_pos)
-        screen.blit(alien_img, (screen.get_width() / 2, 100))
+    def update(self):
+        if self.alive:
+            self.rect.y -= self.vel
+            if self.rect.top <= 0:
+                self.alive = False
+                self.kill()
+            
+
+bullet_group = pygame.sprite.Group()
+
+def render():
+    SCREEN.blit(background_img, (0,0))
+    SCREEN.blit(player_img, player_pos)
+    
+    bullet_group.draw(SCREEN)
+    bullet_group.update()
+    
+    pygame.display.flip()
+    pygame.display.update()
+    
+def events():
+    for event in pygame.event.get():
+        if event.type == pygame.QUIT:
+            run = False
+            pygame.quit()
+            
+        # handle player input    
+        if event.type == pygame.KEYDOWN:
+            if event.key == pygame.K_SPACE:
+                last_shot = time
+                bullet.alive = True
+                bullet_group.add(bullet)
+            
+    keys = pygame.key.get_pressed()
+    if keys[K_ESCAPE]:
+        run = False
+        pygame.quit()
         
-    def shoot():
-        bullet = pygame.draw.circle(screen, "black", 350,400)
-        bullet_pos = pygame.Vector2(350,400)
-        bullet_speed = -10
+
+run = True
+while run:
+    render()
+    events()
+    
+    bullet = bullet_class(player_pos.x + 30, player_pos.y)
+    
+    keys = pygame.key.get_pressed()
+    if keys[K_d]:
+        player_pos.x += player_speed * DT
+    if keys[K_a]:
+        player_pos.x -= player_speed * DT
         
-    while running:
-        render()
-        
-        keys = pygame.key.get_pressed()
-        #movement
-        if keys[pygame.K_a]:
-            player_pos.x -= player_speed * dt
-        if keys[pygame.K_d]:
-            player_pos.x += player_speed * dt
-        
-        
-        if keys[pygame.K_ESCAPE]:
-            running = False
-        
-        pygame.display.flip()
-        clock.tick(fps)
-        dt = clock.tick(fps) / 1000
-        
-pygame.quit()
+    
+    time = pygame.time.get_ticks() # game clock since initialization
+    CLOCK.tick(FPS)
+    DT = CLOCK.tick(FPS) / 1000
