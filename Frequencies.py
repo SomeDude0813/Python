@@ -1,9 +1,7 @@
 # Make an app that allows you to select a frequency and play it
-
 import customtkinter as ctk
-import winsound
+#import winsound
 import numpy
-import sounddevice as sd
 from customtkinter import *
 
 def only_numbers(char):
@@ -28,20 +26,8 @@ entry1 = ctk.CTkEntry(master=app, placeholder_text="Frequency", corner_radius=5,
 entry1.pack( pady=40, padx=10 )
 
 def generateSound():
-    print("clicked")
-    if ENABLED:
-        print("disabled")
-        Audio.Stop()
-        Audio = None
-    else:
-        print("enabled")
-        frequency = int(entry1.get())
-        
-        t = numpy.linspace(0, 1, int(44100 * 1), endpoint = False)
-        audio_data = numpy.sin(2 * numpy.pi * frequency * t)
-        
-        Audio = sd.play(audio_data)
-        #button_text = "Stop"
+    return
+
     
 button_text = "Generate" # Defaults the text
 button_var = ctk.StringVar(value=button_text)
@@ -49,3 +35,9 @@ button = ctk.CTkButton( master=app,textvariable=button_var, width=150, height=30
 button.pack( pady=5, padx= 8 )
 
 app.mainloop()
+
+class App(ctk.CTk()):
+    def __init__(self):
+        super().__init__()
+        self.geometry(" 300x200 ")
+        self.title()
