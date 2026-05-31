@@ -8,3 +8,4 @@ Using the info from the herb book I read in the library and other information I 
 Website: List information about all herbs
 App Idea: (Visual: A human diagram where the user can select different body parts and/or their health issue related to it and see information on the specific herbs to help them)
 '''
+
